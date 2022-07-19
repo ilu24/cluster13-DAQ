@@ -1,5 +1,5 @@
 #include <EEPROM.h>
-#include "GravityTDS.h"
+#include <GravityTDS.h>
 
 #define TdsSensorPin A0
 #define SensorPin A1          // the pH meter Analog output is connected with the Arduino's Analog
