@@ -97,3 +97,4 @@ void loop()
     delay(800);
     digitalWrite(13, LOW);
 }
+//send as json to esp32
