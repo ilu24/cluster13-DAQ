@@ -2,7 +2,7 @@
 #include "GravityTDS.h"
 
 #define TdsSensorPin A0
-#define SensorPin A1          // the pH meter Analog output is connected with the Arduino’s Analog
+#define SensorPin A1          // the pH meter Analog output is connected with the Arduino's Analog
 
 unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
@@ -23,18 +23,16 @@ void setup()
     
     //for ph
     pinMode(13,OUTPUT);  
-    Serial.begin(9600);  
+    Serial.begin(115200);  
     Serial.println("Ready");    //Test the serial monitor
 }
 
 void loop()
 {
-    //temperature = readTemperature();  //add your temperature sensor and read it
+    temperature = readTemperature();  //add your temperature sensor and read it
     gravityTds.setTemperature(temperature);  // set the temperature and execute temperature compensation
     gravityTds.update();  //sample and calculate
-    tdsValue = gravityTds.getTdsValue();  // then get the value
-    Serial.print(tdsValue,0);
-    Serial.println("ppm");
+    tdsValue = gravityTds.getTdsValue();  // then get the value, tds value is in ppm
     delay(1000);
     
     for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
@@ -59,10 +57,8 @@ void loop()
       avgValue+=buf[i];
     float phValue=(float)avgValue*5.0/1024/6; //convert the analog into millivolt
     phValue=3.5*phValue;                      //convert the millivolt into pH value
-    Serial.print("    pH:");  
-    Serial.print(phValue,2);
-    Serial.println(" ");
     digitalWrite(13, HIGH);       
     delay(800);
     digitalWrite(13, LOW); 
+    // variables sent back: phValue, temperature, tdsValue
 }
