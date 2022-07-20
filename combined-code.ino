@@ -1,3 +1,9 @@
+/*
+Credits: https://how2electronics.com/ph-meter-using-ph-sensor-arduino-oled/ ; 
+https://create.arduino.cc/projecthub/TheGadgetBoy/ds18b20-digital-temperature-sensor-and-arduino-9cc806;
+https://wiki.dfrobot.com/Gravity__Analog_TDS_Sensor___Meter_For_Arduino_SKU__SEN0244
+*/
+
 //tds sensor
 #include <EEPROM.h>
 #include "GravityTDS.h"
