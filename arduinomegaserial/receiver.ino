@@ -4,7 +4,7 @@ void setup() {
 
 void loop() {
   while(Serial.available() > 0) {
-    String in = Serial.readStringUntil('\n');
-    Serial.println(in);
+    String sensorDta = Serial.readStringUntil('\n');
+    Serial.println(sensorDta);
   }
 }
