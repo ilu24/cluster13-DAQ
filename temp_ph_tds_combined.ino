@@ -1,11 +1,6 @@
-/*
- * Ref : 
- */
-
-
 //tds sensor
 /*
- Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine, refer to line 50 -gravityTds.setAref(3.3);- to change voltage), Gnd
+ Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine), Gnd
  Ph sensor to A1, 5V, Gnd
  Temperature sensor to digital 2, 5V, Gnd
  */
@@ -14,10 +9,10 @@
 #include "GravityTDS.h"
 
 //tds sensor pin
-#define TdsSensorPin A0
+#define TdsSensorPin A1
 
 //ph sensor pin
-#define SensorPin A1          // the pH meter Analog output is connected with the Arduino's Analog
+#define SensorPin A0          // the pH meter Analog output is connected with the Arduino's Analog
 
 
 //temp stuff
@@ -42,9 +37,8 @@ DallasTemperature sensors(&oneWire);
 unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
 int buf[10], temp;
-float tdsValue = 0;
+float temperature = 25, tdsValue = 0;
 int tempValue;
-String data;
 GravityTDS gravityTds;
 
 
@@ -57,11 +51,8 @@ void setup()
     gravityTds.setAdcRange(1024);  //1024 for 10bit ADC;4096 for 12bit ADC
     gravityTds.begin();  //initialization
 
-    Serial.println("tds sensor begin");
-    
     //for ph
     pinMode(13,OUTPUT);
-    Serial.println("Ready");    //Test the serial monitor
 
     //for temp
     sensors.begin();
@@ -72,33 +63,26 @@ void loop()
 {
 
   float temp=getTemp();
-  Serial.println("Temperature: " + String(temp) );
-
   float ph = getPh();
-  Serial.println("pH value: " + String(ph));
-  
   float tds=getTds();
-  Serial.println("TDS value: " + String(tds));
-
-  data = "{'temp': " + temp + ", 'ph': " + ph + ", 'tds': " + tds + "}";
-
-  Serial.println(String(data[0]) + " " + String(data[1]) + " " + String(data[2]));
-  digitalWrite(13, HIGH);       
-  delay(800);
-  digitalWrite(13, LOW);
-  Serial.println();
-  Serial.println();
+  
+  Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
+  delay(100);
 
 }
 
 float getPh(){
-
-    for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
+  for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
     { 
       buf[i]=analogRead(SensorPin);
       delay(10);
     }
   
+  for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
+  { 
+    buf[i]=analogRead(SensorPin);
+    delay(10);
+  }
   for(int i=0;i<9;i++)        //sort the analog from small to large
   {
     for(int j=i+1;j<10;j++)
@@ -114,21 +98,22 @@ float getPh(){
   avgValue=0;
   for(int i=2;i<8;i++)                      //take the average value of 6 center sample
     avgValue+=buf[i];
-  float phValue=(float)avgValue*5.0/1024/6; //convert the analog into millivolt
-  phValue = 7-(phValue/57.14);                      //convert the millivolt into pH value 
+  float phValue=(float)avgValue/6; //convert the analog into millivolt
+  phValue=-0.027*phValue + 28.6;                      //convert the millivolt into pH value
   return phValue;
+
 }
 
 float getTemp(){
       // variables sent back: phValue, temperature, tdsValue
     sensors.requestTemperatures(); // Send the command to get temperature readings
-    float temperature = sensors.getTempCByIndex(0); 
+    float temperature = sensors.getTempCByIndex(0);
     return temperature;
 }
 
 float getTds(){
       //temperature = readTemperature();  //add your temperature sensor and read it
-    gravityTds.setTemperature(getTemp());  // set the temperature and execute temperature compensation
+    gravityTds.setTemperature(temperature);  // set the temperature and execute temperature compensation
     gravityTds.update();  //sample and calculate
     tdsValue = gravityTds.getTdsValue();  // then get the value, tds value is in ppm
     delay(1000);
