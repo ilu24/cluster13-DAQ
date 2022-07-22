@@ -1,138 +1,140 @@
-
-
-//tds sensor
 /*
- Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine, refer to line 50 -gravityTds.setAref(3.3);- to change voltage), Gnd
- Ph sensor to A1, 5V, Gnd
- Temperature sensor to digital 2, 5V, Gnd
- */
+  Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine, refer to line 50 -tdsSens.setAref(3.3);- to change voltage), Gnd
+  Ph sensor to A1, 5V, Gnd
+  Temperature sensor to digital 2, 5V, Gnd
+*/
 
 #include <EEPROM.h>
 #include "GravityTDS.h"
-
 #include <SoftwareSerial.h>
-
-SoftwareSerial portOne(4, 5); // RX, TX
-
-int LEDpin = 13;
-int number = 1;
-
-//tds sensor pin
-#define TdsSensorPin A0
-
-//ph sensor pin
-#define SensorPin A1          // the pH meter Analog output is connected with the Arduino's Analog
-
-
-//temp stuff
-// First we include the libraries
-#include <OneWire.h> 
+#include <TinyGPS++.h>
+#include <OneWire.h>
 #include <DallasTemperature.h>
-// Data wire is plugged into pin 2 on the Arduino 
-#define ONE_WIRE_BUS 2
-// Setup a oneWire instance to communicate with any OneWire devices  
-// (not just Maxim/Dallas temperature ICs) 
-OneWire oneWire(ONE_WIRE_BUS); 
-// Pass our oneWire reference to Dallas Temperature. 
-DallasTemperature sensors(&oneWire);
 
+#define TDS_SENSOR_PIN A0
+#define PH_SENSOR_PIN A1 // the pH meter Analog output is connected with the Arduino's Analog
+#define TEMP_SENSOR_PIN 2
 
+#define GPS_RX 3
+#define GPS_TX 4
+
+#define ONE_WIRE_BUS 2 // Data wire is plugged into pin 2 on the Arduino
+
+SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
+
+// Setup a oneWire instance to communicate with any OneWire devices
+// (not just Maxim/Dallas temperature ICs)
+OneWire oneWire(ONE_WIRE_BUS);
+// Pass our oneWire reference to Dallas Temperature.
+DallasTemperature tempSens(&oneWire);
+GravityTDS tdsSens;
+TinyGPS gps;
 
 unsigned long int avgValue;  //Store the average value of the sensor feedback
-float b;
 int buf[10], temp;
-float tdsValue = 0;
-int tempValue;
-String data;
-GravityTDS gravityTds;
 
-void setup()
-{
-    //for tds
-    Serial.begin(9600);
-    gravityTds.setPin(TdsSensorPin);
-    gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
-    gravityTds.setAdcRange(1024);  //1024 for 10bit ADC;4096 for 12bit ADC
-    gravityTds.begin();  //initialization
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
 
-    Serial.println("tds sensor begin");
-    
-    //for ph
-    pinMode(13,OUTPUT);
-    Serial.println("Ready");    //Test the serial monitor
+  gpsSerial.begin(9600);
 
-    //for temp
-    sensors.begin();
-    while (!Serial);
-    pinMode(13, OUTPUT);
-    
+  //for tds
+  tdsSens.setPin(TDS_SENSOR_PIN);
+  tdsSens.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
+  tdsSens.setAdcRange(1024);  //1024 for 10bit ADC;4096 for 12bit ADC
+  tdsSens.begin();  //initialization
+
+  //for temp
+  tempSens.begin();
 }
 
-void loop()
-{
-
-  /*
-  Serial.println("Temperature: " + String(temp) );
-
-  
-  Serial.println("pH value: " + String(ph));
-  
-
-  Serial.println("TDS value: " + String(tds));*/
-
-  //data = "{'temp': " + String(temp) + ", 'ph': " + String(ph) + ", 'tds': " + String(tds) + "}";
-  float temp=getTemp();
+void loop() {
+  float temp = getTemp();
   float ph = getPh();
-  float tds=getTds();
- // Serial.println(String(data[0]) + " " + String(data[1]) + " " + String(data[2]));
-  digitalWrite(13, HIGH);       
-  delay(1000);
-  digitalWrite(13, LOW);
-  Serial.println(String(temp) + "," + String(ph) + "," + String(tds) + "\n");
-  delay(1000);
+  float tds = getTds();
+  String gps = "";
 
+  //display information every time a new sentence is correctly encoded
+  while (gpsSerial.available() > 0)
+    if (gps.encode(gpsSerial.read()))
+      gps = getGPSData();
+
+  // if 5000 milliseconds pass and there are no characters coming in
+  // over the software serial port, show a "No GPS detected" error
+  if (millis() > 5000 && gps.charsProcessed() < 10) {
+    Serial.println("No GPS detected");
+    while (true);
+  }
+
+  Serial.println(gps + "," + String(temp) + "," + String(ph) + "," + String(tds) + "\n");
+  delay(500);
 }
 
-float getPh(){
+float getPh() {
+  //get 10 sample value from the sensor for smooth the value
+  for (int i = 0; i < 10; i++) {
+    buf[i] = analogRead(SensorPin);
+    delay(10);
+  }
 
-    for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
-    { 
-      buf[i]=analogRead(SensorPin);
-      delay(10);
-    }
-  
-  for(int i=0;i<9;i++)        //sort the analog from small to large
-  {
-    for(int j=i+1;j<10;j++)
-    {
-      if(buf[i]>buf[j])
-      {
-        temp=buf[i];
-        buf[i]=buf[j];
-        buf[j]=temp;
+  //sort the analog from small to large
+  for (int i = 0; i < 9; i++) {
+    for (int j = i + 1; j < 10; j++) {
+      if (buf[i] > buf[j]) {
+        temp = buf[i];
+        buf[i] = buf[j];
+        buf[j] = temp;
       }
     }
   }
-  avgValue=0;
-  for(int i=2;i<8;i++)                      //take the average value of 6 center sample
-    avgValue+=buf[i];
-  float phValue=(float)avgValue*5.0/1024/6; //convert the analog into millivolt
-  phValue = 7-(phValue/57.14);                      //convert the millivolt into pH value 
-  return phValue;
+  avgValue = 0;
+  for (int i = 2; i < 8; i++)               //take the average value of 6 center sample
+    avgValue += buf[i];
+  float phMillivolt = (float)avgValue * 5.0 / 1024 / 6; //convert the analog into millivolt
+  float phVal = 7 - (phMillivolt / 57.14);                  //convert the millivolt into pH value
+  return phVal;
 }
 
-float getTemp(){
-      // variables sent back: phValue, temperature, tdsValue
-    sensors.requestTemperatures(); // Send the command to get temperature readings
-    float temperature = sensors.getTempCByIndex(0); 
-    return temperature;
+float getTemp() {
+  // variables sent back: phValue, temperature, tdsValue
+  sensors.requestTemperatures(); // Send the command to get temperature readings
+  float tempVal = sensors.getTempCByIndex(0);
+  return tempVal;
 }
 
-float getTds(){
-      //temperature = readTemperature();  //add your temperature sensor and read it
-    gravityTds.setTemperature(getTemp());  // set the temperature and execute temperature compensation
-    gravityTds.update();  //sample and calculate
-    tdsValue = gravityTds.getTdsValue();  // then get the value, tds value is in ppm
-    delay(1000);
-    return tdsValue;
+float getTds() {
+  //temperature = readTemperature();  //add your temperature sensor and read it
+  tdsSens.setTemperature(getTemp());  // set the temperature and execute temperature compensation
+  tdsSens.update();  //sample and calculate
+  float tdsVal = tdsSens.getTdsValue();  // then get the value, tds value is in ppm
+  delay(1000);
+  return tdsVal;
+}
+
+String getGPSData() {
+  String timeStr, gpsData, hour, minute, second;
+
+  if (gps.location.isValid()) {
+    gpsData += "{lat:" + (gps.location.lat(), 6);
+    gpsData += ",lon:" + (gps.location.lng(), 6);
+  }
+  else {
+    gpsData += "{location: not available";
+    gpsData += ",location: not available";
+  }
+  
+  //format hour, minute, and second before assigning them; add a zero in front of values that are only 1 digit long (<10)
+  hour = gps.time.hour() < 10 ? "0" + String(gps.time.hour()) : String(gps.time.hour())
+  minute = gps.time.minute() < 10 ? "0" + String(gps.time.minute()) : String(gps.time.minute());
+  second = gps.time.second() < 10 ? "0" + String(gps.time.second()) : String(gps.time.second());
+
+  if (gps.date.isValid() && gps.time.isValid()) {
+    timeStr = String(gps.date.year()) + "-" + String(gps.date.month()) + "-" + String(gps.date.day()) + " " + hour + ":" + minute + ":" + second;
+      gpsData += ",time:" + timeStr + "}";
+  }
+  else {
+    Serial.println("Not Available");
+  }
+  return gpsData;
 }
