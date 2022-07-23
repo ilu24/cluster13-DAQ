@@ -99,6 +99,7 @@ float getPh(){
   for(int i=2;i<8;i++)                      //take the average value of 6 center sample
     avgValue+=buf[i];
   float phValue=(float)avgValue/6; //convert the analog into millivolt
+  phValue=-0.027*phValue + 28.6                      //convert the millivolt into pH value
   phValue=-0.027*phValue + 28.6;                      //convert the millivolt into pH value
   return phValue;
 
