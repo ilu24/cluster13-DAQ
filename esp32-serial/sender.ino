@@ -70,24 +70,14 @@ void setup()
 
 void loop()
 {
-
-  /*
-  Serial.println("Temperature: " + String(temp) );
-
-  
-  Serial.println("pH value: " + String(ph));
-  
-
-  Serial.println("TDS value: " + String(tds));*/
-
-  //data = "{'temp': " + String(temp) + ", 'ph': " + String(ph) + ", 'tds': " + String(tds) + "}";
+  //json format: data = "{'temp': " + String(temp) + ", 'ph': " + String(ph) + ", 'tds': " + String(tds) + "}";
   float temp=getTemp();
   float ph = getPh();
   float tds=getTds();
- // Serial.println(String(data[0]) + " " + String(data[1]) + " " + String(data[2]));
-  digitalWrite(13, HIGH);       
+  // Serial.println(String(data[0]) + " " + String(data[1]) + " " + String(data[2]));
+  /*digitalWrite(13, HIGH);       
   delay(1000);
-  digitalWrite(13, LOW);
+  digitalWrite(13, LOW);*/
   Serial.println(String(temp) + "," + String(ph) + "," + String(tds) + "\n");
   delay(1000);
 
