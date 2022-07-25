@@ -8,3 +8,7 @@ TDS sensor:
 - A - GND
 - + -- 5V
 
+pH sensor:
+- V+ -- power/red
+- G -- GND
+- Po -- SIGNAL/A1
