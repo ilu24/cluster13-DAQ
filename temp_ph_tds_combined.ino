@@ -45,7 +45,7 @@ GravityTDS gravityTds;
 void setup()
 {
     //for tds
-    Serial.begin(9600);
+    Serial.begin(115200);
     gravityTds.setPin(TdsSensorPin);
     gravityTds.setAref(3.3);  //reference voltage on ADC, default 5.0V on Arduino UNO
     gravityTds.setAdcRange(1024);  //1024 for 10bit ADC;4096 for 12bit ADC
@@ -99,7 +99,6 @@ float getPh(){
   for(int i=2;i<8;i++)                      //take the average value of 6 center sample
     avgValue+=buf[i];
   float phValue=(float)avgValue/6; //convert the analog into millivolt
-  phValue=-0.027*phValue + 28.6                      //convert the millivolt into pH value
   phValue=-0.027*phValue + 28.6;                      //convert the millivolt into pH value
   return phValue;
 
