@@ -87,7 +87,7 @@ float getTemp(){
 }
 
 float getTds(){
-      //temperature = readTemperature();  //add your temperature sensor and read it
+    temperature = getTemp();  //add your temperature sensor and read it
     gravityTds.setTemperature(temperature);  // set the temperature and execute temperature compensation
     gravityTds.update();  //sample and calculate
     tdsValue = gravityTds.getTdsValue();  // then get the value, tds value is in ppm
