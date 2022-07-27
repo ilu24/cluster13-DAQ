@@ -9,7 +9,7 @@ int aLastState;
 int rot = 0;
 int counter = 0;
 int counter2 = 0;
-bool measure = true;
+bool measure = false;
 float tds;
 float temp;
 float ph;
@@ -135,7 +135,7 @@ void fillArray(String txt) {
   int lastIndex = txt.length();
   int startIndex = 0;
   int commaIndex = txt.indexOf(",");
-  
+
   for (int index = 0; index < 3; index++) {
     data[index] = txt.substring(startIndex, commaIndex).toFloat();
     startIndex = commaIndex + 1;
