@@ -10,8 +10,8 @@
 #include <OneWire.h> 
 #include <DallasTemperature.h>
 
-#define TdsSensorPin A1       // tds
-#define SensorPin A0          // the pH meter Analog output is connected with the Arduino's Analog
+#define TdsSensorPin A0       // tds
+#define SensorPin A1          // the pH meter Analog output is connected with the Arduino's Analog
 #define ONE_WIRE_BUS 2        // temp
 #define Offset 0.00
 #define samplingInterval 20
