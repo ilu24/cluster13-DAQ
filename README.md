@@ -6,4 +6,5 @@
 
 ### basic serial communication between esp 32 and arduino is in esp32-serial folder
 
-### most recent code for capsule is capsule_sender.ino --> receiver code will be added shortly but the one in the esp32 should function as well
+### quasi-finalized codes are the following files
+<img width="200" alt="Screen Shot 2022-07-27 at 3 56 48 PM" src="https://user-images.githubusercontent.com/98288767/181386438-36f0027d-ff93-47ba-9723-9ca5e8f8c24c.png">
