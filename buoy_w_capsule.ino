@@ -34,7 +34,6 @@ void loop() {
   counter2 = 0;
   depth = rot * 20;
 
-  Serial.print(1); // ready to collect data
   sensorDATA = collectData();
   
   while (rot < 10) {
@@ -53,7 +52,7 @@ void loop() {
     }
   }
   digitalWrite(9, LOW);
-  Serial.println(1); // ready to collect data
+
   sensorDATA = collectData();
 
   while (rot < 20) {
@@ -74,7 +73,7 @@ void loop() {
     }
   }
   digitalWrite(9, LOW);
-  Serial.println(1); // ready to collect data
+
   sensorDATA = collectData();
 
   // delay(10000);
@@ -97,7 +96,7 @@ void loop() {
     }
   }
   digitalWrite(9, LOW);
-  Serial.println(1); // ready to collect data
+
   sensorDATA = collectData();
   
   rot = 0;
@@ -105,7 +104,7 @@ void loop() {
   int change = 0;
   lastMillis2 = millis();
 
-  // reels back up?
+  // reels back up
   while (rot < 29 || change > 4) {
     lastMillis = millis();
     digitalWrite(9, LOW);
@@ -128,7 +127,6 @@ void loop() {
     }
   }
   digitalWrite(8, LOW);
-  //delay(10000);
 }
 
 String collectData() {
@@ -137,14 +135,3 @@ String collectData() {
   }
   measure = true;
 }
-/*void fillArray(String txt) {
-  int lastIndex = txt.length();
-  int startIndex = 0;
-  int commaIndex = txt.indexOf(",");
-
-  for (int index = 0; index < 3; index++) {
-    data[index] = txt.substring(startIndex, commaIndex).toFloat();
-    startIndex = commaIndex + 1;
-    commaIndex = txt.indexOf(",", startIndex);
-  }
-  }*/
