@@ -38,7 +38,7 @@ void loop() {
     if (sensorDta.length() > 1) {
       measure  = true;
     }
-    fillArray(sensorDta);
+    //fillArray(sensorDta);
   }
 
   if (measure) {
@@ -131,7 +131,7 @@ void loop() {
   //delay(10000);
 }
 
-void fillArray(String txt) {
+/*void fillArray(String txt) {
   int lastIndex = txt.length();
   int startIndex = 0;
   int commaIndex = txt.indexOf(",");
@@ -141,4 +141,4 @@ void fillArray(String txt) {
     startIndex = commaIndex + 1;
     commaIndex = txt.indexOf(",", startIndex);
   }
-}
+}*/
