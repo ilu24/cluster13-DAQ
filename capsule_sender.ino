@@ -48,14 +48,12 @@ void setup()
 
 void loop()
 {
-  if (Serial.read() == 1) {
-    float temp = getTemp();
-    float ph = getPh();
-    float tds = getTds();
+  float temp = getTemp();
+  float ph = getPh();
+  float tds = getTds();
 
-    Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
-  }
-  delay(1000);
+  Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
+  delay(800);
 }
 
 float getPh() {
