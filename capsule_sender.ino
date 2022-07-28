@@ -1,18 +1,18 @@
 /*
- Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine), Gnd
- Ph sensor to A1, 5V, Gnd
- Temperature sensor to digital 2, 5V, Gnd
- */
+  Tds sensor to A0, 3.3V with esp32, 5V with Arduino Mega (either Voltage should be fine), Gnd
+  Ph sensor to A1, 5V, Gnd
+  Temperature sensor to digital 2, 5V, Gnd
+*/
 
 /*
-Credits: https://how2electronics.com/ph-meter-using-ph-sensor-arduino-oled/ ; 
-https://create.arduino.cc/projecthub/TheGadgetBoy/ds18b20-digital-temperature-sensor-and-arduino-9cc806;
-https://wiki.dfrobot.com/Gravity__Analog_TDS_Sensor___Meter_For_Arduino_SKU__SEN0244
+  Credits: https://how2electronics.com/ph-meter-using-ph-sensor-arduino-oled/ ;
+  https://create.arduino.cc/projecthub/TheGadgetBoy/ds18b20-digital-temperature-sensor-and-arduino-9cc806;
+  https://wiki.dfrobot.com/Gravity__Analog_TDS_Sensor___Meter_For_Arduino_SKU__SEN0244
 */
 
 #include <EEPROM.h>
 #include "GravityTDS.h"
-#include <OneWire.h> 
+#include <OneWire.h>
 #include <DallasTemperature.h>
 
 #define TdsSensorPin A0 // tds
@@ -22,11 +22,11 @@ https://wiki.dfrobot.com/Gravity__Analog_TDS_Sensor___Meter_For_Arduino_SKU__SEN
 #define samplingInterval 20
 #define ArrayLength 40
 
-OneWire oneWire(ONE_WIRE_BUS); 
+OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 GravityTDS gravityTds;
 
-unsigned long int avgValue; 
+unsigned long int avgValue;
 float temperature = 25, tdsValue = 0;
 int tempValue;
 int pHArray[ArrayLength];
@@ -34,101 +34,95 @@ int pHArrayIndex = 0;
 
 void setup()
 {
-    Serial.begin(115200);
+  Serial.begin(115200);
+  gravityTds.setPin(TdsSensorPin);
+  gravityTds.setAref(5.0);
 
-    //tds
-    gravityTds.setPin(TdsSensorPin);
-    
-    //reference voltage on ADC, default 5.0V on Arduino UNO
-    gravityTds.setAref(5.0); 
+  //1024 for 10bit ADC;4096 for 12bit ADC
+  gravityTds.setAdcRange(1024);
+  gravityTds.begin();
 
-    //1024 for 10bit ADC;4096 for 12bit ADC
-    gravityTds.setAdcRange(1024);  
-    gravityTds.begin(); 
-
-    //ph
-    pinMode(13,OUTPUT);
-
-    //temp
-    sensors.begin();
+  //temp
+  sensors.begin();
 }
 
 void loop()
-{  
-  float temp=getTemp();
-  float ph = getPh();
-  float tds=getTds();
+{
+  if (Serial.read() == 1) {
+    float temp = getTemp();
+    float ph = getPh();
+    float tds = getTds();
 
-  Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
-  delay(100);
-
+    Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
+  }
+  delay(1000);
 }
 
-float getPh(){
+float getPh() {
   static unsigned long samplingTime = millis();
-  static float pHValue,voltage;
+  static float pHValue, voltage;
 
-  if(millis()-samplingTime > samplingInterval) {
-      pHArray[pHArrayIndex++]=analogRead(SensorPin);
-      if(pHArrayIndex==ArrayLength)pHArrayIndex=0;
-      voltage = avergearray(pHArray, ArrayLength)*5.0/1024;
-      pHValue = -5.553016453*voltage + 28.69378428;
-      samplingTime=millis();
+  if (millis() - samplingTime > samplingInterval) {
+    pHArray[pHArrayIndex++] = analogRead(SensorPin);
+    if (pHArrayIndex == ArrayLength)pHArrayIndex = 0;
+    voltage = avergearray(pHArray, ArrayLength) * 5.0 / 1024;
+    pHValue = -5.553016453 * voltage + 28.69378428;
+    samplingTime = millis();
   }
   return pHValue;
 }
 
-float getTemp() { 
-    sensors.requestTemperatures();
-    float temperature = sensors.getTempCByIndex(0);
-    return temperature;
+float getTemp() {
+  sensors.requestTemperatures();
+  float temperature = sensors.getTempCByIndex(0);
+  return temperature;
 }
 
 float getTds() {
-    temperature = getTemp(); 
-    gravityTds.setTemperature(temperature); 
-    gravityTds.update();  
-    tdsValue = gravityTds.getTdsValue(); 
-    delay(800);
-    return tdsValue;
+  temperature = getTemp();
+  gravityTds.setTemperature(temperature);
+  gravityTds.update();
+  tdsValue = gravityTds.getTdsValue();
+  delay(800);
+  return tdsValue;
 }
 
 double avergearray(int* arr, int number) {
   int i;
-  int max,min;
+  int max, min;
   double avg;
-  long amount=0;
-  if(number<=0){
+  long amount = 0;
+  if (number <= 0) {
     Serial.println("Error number for the array to avraging!/n");
     return 0;
   }
-  if(number<5){ 
-    for(i=0;i<number;i++){
-      amount+=arr[i];
+  if (number < 5) {
+    for (i = 0; i < number; i++) {
+      amount += arr[i];
     }
-    avg = amount/number;
+    avg = amount / number;
     return avg;
-  }else{
-    if(arr[0]<arr[1]){
-      min = arr[0];max=arr[1];
+  } else {
+    if (arr[0] < arr[1]) {
+      min = arr[0]; max = arr[1];
     }
-    else{
-      min=arr[1];max=arr[0];
+    else {
+      min = arr[1]; max = arr[0];
     }
-    for(i=2;i<number;i++){
-      if(arr[i]<min){
-        amount+=min;
-        min=arr[i];
-      }else {
-        if(arr[i]>max){
-          amount+=max;
-          max=arr[i];
-        }else{
-          amount+=arr[i]; 
+    for (i = 2; i < number; i++) {
+      if (arr[i] < min) {
+        amount += min;
+        min = arr[i];
+      } else {
+        if (arr[i] > max) {
+          amount += max;
+          max = arr[i];
+        } else {
+          amount += arr[i];
         }
       }
     }
-    avg = (double)amount/(number-2);
+    avg = (double)amount / (number - 2);
   }
   return avg;
 }
