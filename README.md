@@ -26,6 +26,7 @@ Hardware:
 - Jumper wires, wires
 - Protoboard, breadboard
 - Solder
+- Sensors: pH, TDS (total dissolved solids), and temperature
 
 Software:
 - Arduino IDE
