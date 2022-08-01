@@ -57,7 +57,7 @@ void loop()
   float tds = getTds();
 
   Serial.println(String(temp) + "," + String(tds) + "," + String(ph));
-//  delay(800);
+  delay(1000);
 }
 
 
@@ -81,7 +81,7 @@ float getPh(){
   for(int i=0;i<10;i++)       //Get 10 sample value from the sensor for smooth the value
     { 
       buf[i]=analogRead(SensorPin);
-//      delay(10);
+      delay(10);
     }
   
   for(int i=0;i<9;i++)        //sort the analog from small to large
