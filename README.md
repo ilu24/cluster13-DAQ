@@ -26,7 +26,10 @@ Hardware:
 - Jumper wires, wires
 - Protoboard, breadboard
 - Solder
+- Hall effect sensor (to pull capsule back up)
 - Sensors: pH, TDS (total dissolved solids), and temperature
+- Calibration solutions: [pH](https://www.amazon.com/Atlas-Scientific-Electrode-Calibration-Solution/dp/B0063MVU5S/ref=sr_1_2_sspa?crid=LED7BUK1NYP2&keywords=potassium+chloride+storage+solution&qid=1658250704&sprefix=potassium+chloride+storagesolution%2Caps%2C111&sr=8-2-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyVVhRT1dUNFI3WFVNJmVuY3J5cHRlZElkPUEwMzc3MzExMzJVWTJLQjAzWkM5VSZlbmNyeXB0ZWRBZElkPUEwNTY5NzczWVZISkNQUllaMFRKJndpZGdldE5hbWU9c3BfYXRmJmFjdGlvbj1jbGlja1JlZGlyZWN0JmRvTm90TG9nQ2xpY2s9dHJ1ZQ==), [tds](https://www.amazon.com/HM-Digital-1000ppm-Calibration-Solution/dp/B001FD6WZ8/ref=sr_1_3?crid=1MKJVGSDON4SL&keywords=tds+calibration+solution+1000+ppm&qid=1658167608&sprefix=tds+calibration+solution%2Caps%2C115&sr=8-3)
+- [Thermometer](https://www.amazon.com/Yacumama-Instant-Thermometer-WATERPROOF-Grilling/dp/B087XBXFM6/ref=sr_1_1_sspa?crid=1ZI7NBGGZ0YM0&keywords=water+temperature+thermometer&qid=1658167757&sprefix=water+tempera%2Caps%2C157&sr=8-1-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUExVk9NRDJTVkhOWTNWJmVuY3J5cHRlZElkPUEwNTUzMDk5QUw2R1ZDU1ZVU0EwJmVuY3J5cHRlZEFkSWQ9QTA0NTQyMTUzNEJJNzJOR0ZHWTImd2lkZ2V0TmFtZT1zcF9hdGYmYWN0aW9uPWNsaWNrUmVkaXJlY3QmZG9Ob3RMb2dDbGljaz10cnVl) (temp sensor calibration)
 
 Software:
 - Arduino IDE
