@@ -8,7 +8,7 @@ Charlie Wright, Sannie Wan, Isabella Lu
 
 ***
 #### Project and Purpose
-Cluster 13 H4O plans to build an autonomous boat that'll tug a buoy along. The buoy will collect data (pH, temperature, tds) using a capsule that'll drop down into the water and send it back to the database via LoRa.
+Cluster 13 H4O plans to build an autonomous boat that'll tug a buoy along. The buoy will collect data (pH, temperature, tds) using a submersive capsule that'll send the data back to the database via Long Range Radio.
 
 Group 6 DAQ's role in this project is to assure accurate data readings and program the necessary hardware to send capsule data back to the buoy, in order for the buoy to be able to send the data to the database.
 
