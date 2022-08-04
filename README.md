@@ -14,15 +14,17 @@ Group 6 DAQ's role in this project is to assure accurate data readings and progr
 
 ***
 #### Tasks and Responsibilities
-- Hardware: Sensors (calibration, wiring, programming)
-- Software: Serial communication (ESP32 - Arduino Uno)
+- Calibrating the sensors
+- Wiring the sensors
+- Reading data from the sensors
+- Serial communication (ESP32 - Arduino)
 <img width="400" alt="Screen Shot 2022-08-01 at 10 35 17 AM" src="https://user-images.githubusercontent.com/98288767/182208779-105195eb-0233-4483-9548-88205e36d9cb.png">
 
 ***
 #### Materials
 Hardware:
-- Arduino UNO, MEGA, and NANO
-- ESP32
+- Arduino [UNO](https://store-usa.arduino.cc/products/arduino-uno-rev3), [MEGA](https://store.arduino.cc/products/arduino-mega-2560-rev3), or [NANO](https://store.arduino.cc/products/arduino-nano)
+- [ESP32](https://heltec.org/project/wifi-lora-32/)
 - Jumper wires, wires
 - Protoboard, breadboard
 - Solder
